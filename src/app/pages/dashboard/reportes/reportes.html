@@ -1,0 +1,61 @@
+<div class="reportes-container">
+  <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h2 class="page-title" style="margin: 0;">Reportes y Estadísticas</h2>
+    
+    <button class="btn-primary voice-btn" (click)="iniciarConsultaPorVoz()" [disabled]="isLoading" [ngClass]="{'pulse-animation': isSpeaking}">
+      {{ isSpeaking ? 'Escuchando tu pregunta...' : 'Consultar Reporte por Voz' }}
+    </button>
+  </div>
+
+  <div *ngIf="respuestaVoz" class="glass-card mb-4" style="background-color: #fff3ed; color: #333; padding: 15px; border-left: 4px solid var(--primary); border-radius: 4px; margin-bottom: 20px;">
+    <strong>Respuesta de IA:</strong> {{ respuestaVoz }}
+  </div>
+
+  <div *ngIf="isLoading" class="loading-state">
+    <p>Analizando datos de la tienda...</p>
+  </div>
+
+  <div *ngIf="!isLoading && reporte" class="kpi-grid">
+    <div class="glass-card kpi-card">
+      <div class="kpi-icon">💰</div>
+      <div class="kpi-info">
+        <h3>Ingresos Totales</h3>
+        <p class="kpi-value">Bs. {{ reporte.total_ingresos }}</p>
+      </div>
+    </div>
+
+    <div class="glass-card kpi-card">
+      <div class="kpi-icon">📈</div>
+      <div class="kpi-info">
+        <h3>Ventas Realizadas</h3>
+        <p class="kpi-value">{{ reporte.total_ventas }}</p>
+      </div>
+    </div>
+
+    <div class="glass-card kpi-card">
+      <div class="kpi-icon">🛍️</div>
+      <div class="kpi-info">
+        <h3>Ticket Promedio</h3>
+        <p class="kpi-value">Bs. {{ reporte.ticket_promedio | number:'1.2-2' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && reporte" class="glass-card charts-container" style="margin-top: 2rem;">
+    <h3>Métodos de Pago Preferidos</h3>
+    <div class="methods-breakdown">
+      <div class="method-item">
+        <span>Efectivo</span>
+        <strong>{{ reporte.ventas_por_metodo.Efectivo }}</strong>
+      </div>
+      <div class="method-item">
+        <span>QR (Transferencia)</span>
+        <strong>{{ reporte.ventas_por_metodo.QR }}</strong>
+      </div>
+      <div class="method-item">
+        <span>Tarjeta (Stripe)</span>
+        <strong>{{ reporte.ventas_por_metodo.Stripe }}</strong>
+      </div>
+    </div>
+  </div>
+</div>

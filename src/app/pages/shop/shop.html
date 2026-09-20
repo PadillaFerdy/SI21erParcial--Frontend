@@ -1,0 +1,238 @@
+<!-- Navbar de la Tienda -->
+<nav class="shop-navbar glass-card">
+  <div class="logo-container">
+    <div class="logo-icon small"></div>
+    <span class="brand-text">UrbanStyle AR</span>
+  </div>
+  
+  <div class="nav-links">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+    <a routerLink="/colecciones">Colecciones</a>
+    <a routerLink="/vestidor-virtual" class="ai-badge" routerLinkActive="active">Vestidor Virtual</a>
+    <a routerLink="/login" class="login-link">Acceso Empleados</a>
+  </div>
+
+  <div class="nav-actions">
+    <button class="cart-btn" (click)="toggleCart()">
+      🛒 <span class="cart-badge">{{ cartItems.length }}</span>
+    </button>
+  </div>
+</nav>
+
+<!-- Contenedor Principal donde se inyectan las páginas (Home, Producto, etc) -->
+<main class="shop-content">
+  <router-outlet></router-outlet>
+</main>
+
+<!-- Footer -->
+<footer class="shop-footer">
+  <p>&copy; 2026 UrbanStyle AR. Todos los derechos reservados.</p>
+</footer>
+
+<!-- Carrito Sidebar (Overlay) -->
+<div class="cart-overlay" *ngIf="isCartOpen" (click)="toggleCart()"></div>
+<div class="cart-sidebar" [class.open]="isCartOpen">
+  <div class="cart-header">
+    <h3>Tu Carrito</h3>
+    <button class="close-btn" (click)="toggleCart()">×</button>
+  </div>
+  
+  <div class="cart-body">
+    <div *ngIf="cartItems.length === 0" class="empty-cart">
+      <p>Tu carrito está vacío.</p>
+      <button class="btn-primary" (click)="toggleCart()">Explorar Catálogo</button>
+    </div>
+    
+    <!-- Items del Carrito -->
+    <div class="cart-items-list" *ngIf="cartItems.length > 0">
+      <div class="cart-item" *ngFor="let item of cartItems; let i = index">
+        <img [src]="item.producto.imagen_url || 'https://via.placeholder.com/60?text=Foto'" class="cart-item-img" alt="Product Image">
+        <div class="item-info">
+          <h4>{{ item.producto.nombre }}</h4>
+          <p class="item-price">Bs. {{ item.producto.precio }} <span class="qty">x{{ item.cantidad }}</span></p>
+        </div>
+        <div class="item-actions">
+          <span class="item-subtotal">Bs. {{ item.subtotal }}</span>
+          <button class="remove-btn" (click)="removeFromCart(i)" title="Eliminar del carrito">
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="cart-footer" *ngIf="cartItems.length > 0">
+    <div class="total-row">
+      <span>Total:</span>
+      <span class="font-bold text-primary">Bs. {{ cartService.getTotal() }}</span>
+    </div>
+    <button class="btn-primary full-width" (click)="openCheckout()">Proceder al Pago / Reserva</button>
+  </div>
+</div>
+
+<!-- Modal de Checkout -->
+<div class="checkout-overlay" *ngIf="isCheckoutOpen">
+  <div class="checkout-modal glass-card">
+    <div class="modal-header">
+      <h2>Completar Pedido</h2>
+      <button class="close-btn" (click)="closeCheckout()">×</button>
+    </div>
+    
+    <div class="modal-body" *ngIf="!isSuccess">
+      <div class="form-group">
+        <label>Correo Electrónico</label>
+        <input type="email" class="input-field" placeholder="tu@correo.com" [(ngModel)]="correoCliente">
+      </div>
+
+      <div class="form-group">
+        <label>¿Cómo quieres recibir tu pedido?</label>
+        <select class="input-field" [(ngModel)]="tipoEntrega" (change)="onTipoEntregaChange()">
+          <option value="Recojo en Tienda">Recoger en Sucursal (Reserva)</option>
+          <option value="Delivery">Envío a Domicilio (Delivery)</option>
+        </select>
+      </div>
+      
+      <div class="form-group" *ngIf="tipoEntrega === 'Recojo en Tienda'">
+        <label>Sucursal de Recojo</label>
+        <select class="input-field" [(ngModel)]="sucursalSeleccionada">
+          <option [value]="null" disabled selected>Selecciona una sucursal...</option>
+          <option *ngFor="let suc of sucursales" [value]="suc.id">{{ suc.nombre }}</option>
+        </select>
+      </div>
+
+      <div class="form-group" *ngIf="tipoEntrega === 'Delivery'">
+        <label>Dirección de Envío</label>
+        <input type="text" class="input-field" placeholder="Ej: Calle 123, Zona Sur" [(ngModel)]="direccionEnvio">
+      </div>
+      
+      <div class="form-group">
+        <label>Método de Pago</label>
+        <select class="input-field" [(ngModel)]="metodoPagoGlobal" (change)="onMetodoPagoChange()">
+          <option value="Caja" *ngIf="tipoEntrega === 'Recojo en Tienda'">Pagar en Caja de la Sucursal</option>
+          <option value="Efectivo" *ngIf="tipoEntrega === 'Delivery'">Efectivo al recibir</option>
+          <option value="Tarjeta">Tarjeta de Crédito / Débito</option>
+          <option value="QR">Transferencia QR</option>
+        </select>
+      </div>
+
+      <div class="form-group" *ngIf="metodoPagoGlobal === 'Tarjeta'" style="background: rgba(0,0,0,0.02); padding: 20px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <label style="font-size: 0.85rem; margin: 0;">Número de Tarjeta</label>
+          <div style="display: flex; gap: 4px;">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" style="color: #6366f1;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+          </div>
+        </div>
+        <input type="text" class="input-field" placeholder="0000 0000 0000 0000" style="margin-bottom: 12px; letter-spacing: 2px; font-family: monospace; font-size: 1.1rem;"
+               autocomplete="off" maxlength="19" [value]="numeroTarjeta" (input)="onTarjetaNativeInput($event)">
+        <div style="display: flex; gap: 12px;">
+          <input type="text" class="input-field" placeholder="MM/AA" style="flex: 1;" autocomplete="off" maxlength="5" [value]="fechaExpiracion" (input)="onFechaNativeInput($event)">
+          <input type="text" class="input-field" placeholder="CVC" style="flex: 1;" autocomplete="off" maxlength="4">
+        </div>
+        
+        <!-- Badge de Stripe -->
+        <div style="display: flex; flex-direction: column; align-items: center; margin-top: 15px;">
+          <div class="secure-badge" style="margin-top: 0; margin-bottom: 5px;">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            Procesado de forma segura
+          </div>
+          <div style="font-size: 0.7rem; color: #64748b; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+            POWERED BY <strong style="color: #6366f1; font-size: 0.9rem; letter-spacing: 1px;">stripe</strong>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group text-center" *ngIf="metodoPagoGlobal === 'QR'" style="background: rgba(0,0,0,0.02); padding: 20px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center;">
+        <p class="text-muted" style="margin-bottom: 15px; font-size: 0.95rem;">Escanea el código con tu App Bancaria para pagar <strong class="text-primary">Bs. {{ cartService.getTotal() }}</strong></p>
+        <div class="qr-container qr-pulse" style="position: relative; width: 180px; height: 180px; background: white; border: 2px solid #e2e8f0; border-radius: 12px; padding: 15px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
+          <!-- Scanner Line -->
+          <div class="qr-scanner" style="position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: #f97316; box-shadow: 0 0 15px 3px #f97316; animation: scan 2s ease-in-out infinite; z-index: 10;"></div>
+          
+          <!-- Mock QR Code SVG -->
+          <svg viewBox="0 0 100 100" width="100%" height="100%">
+            <!-- Marco exterior -->
+            <rect x="10" y="10" width="25" height="25" fill="none" stroke="#1e293b" stroke-width="6"/>
+            <rect x="16" y="16" width="13" height="13" fill="#1e293b"/>
+            
+            <rect x="65" y="10" width="25" height="25" fill="none" stroke="#1e293b" stroke-width="6"/>
+            <rect x="71" y="16" width="13" height="13" fill="#1e293b"/>
+            
+            <rect x="10" y="65" width="25" height="25" fill="none" stroke="#1e293b" stroke-width="6"/>
+            <rect x="16" y="71" width="13" height="13" fill="#1e293b"/>
+            
+            <!-- Patrones internos simulados -->
+            <rect x="45" y="10" width="10" height="10" fill="#1e293b"/>
+            <rect x="45" y="25" width="10" height="10" fill="#1e293b"/>
+            <rect x="10" y="45" width="10" height="10" fill="#1e293b"/>
+            <rect x="25" y="45" width="25" height="10" fill="#1e293b"/>
+            <rect x="60" y="45" width="10" height="10" fill="#1e293b"/>
+            <rect x="80" y="45" width="10" height="10" fill="#1e293b"/>
+            <rect x="45" y="65" width="10" height="25" fill="#1e293b"/>
+            <rect x="65" y="65" width="25" height="10" fill="#1e293b"/>
+            <rect x="80" y="80" width="10" height="10" fill="#1e293b"/>
+            <rect x="65" y="80" width="10" height="10" fill="#1e293b"/>
+          </svg>
+        </div>
+        <div class="secure-badge" style="margin-top: 15px;">
+          <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Aprobación automática instantánea
+        </div>
+      </div>
+      
+      <div class="order-summary">
+        <h4>Resumen de tu pedido</h4>
+        <div class="summary-row" *ngFor="let item of cartItems">
+          <span>{{ item.cantidad }}x {{ item.producto.nombre }}</span>
+          <span>Bs. {{ item.subtotal }}</span>
+        </div>
+        <hr>
+        <div class="summary-row total">
+          <span>Total a Pagar</span>
+          <span>Bs. {{ cartService.getTotal() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANTALLA DE ÉXITO -->
+    <div class="modal-body success-state" *ngIf="isSuccess" style="text-align: center; padding: 40px 20px;">
+      <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+        <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+        <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+      </svg>
+      <h3 style="color: #10b981; margin-top: 20px; font-size: 1.8rem;">¡Pago Exitoso!</h3>
+      <p class="text-muted" style="margin-top: 10px; font-size: 1.1rem;">{{ successMessage }}</p>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn-secondary" *ngIf="!isSuccess" (click)="closeCheckout()">Cancelar</button>
+      <button class="btn-primary" *ngIf="!isSuccess" (click)="confirmarPedido()" [disabled]="isProcessing || !correoCliente || (tipoEntrega === 'Recojo en Tienda' && !sucursalSeleccionada) || (tipoEntrega === 'Delivery' && !direccionEnvio)">
+        {{ isProcessing ? 'Procesando...' : 'Confirmar Pedido' }}
+      </button>
+      <button class="btn-primary" *ngIf="isSuccess" (click)="closeCheckout()" style="width: 100%;">Entendido</button>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile Bottom Navigation Bar -->
+<nav class="bottom-nav">
+  <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
+    <span class="icon">🏠</span>
+    <span>Inicio</span>
+  </a>
+  <a routerLink="/colecciones" routerLinkActive="active" class="nav-item">
+    <span class="icon">🛍️</span>
+    <span>Catálogo</span>
+  </a>
+  <a routerLink="/vestidor-virtual" routerLinkActive="active" class="nav-item special-ai">
+    <span class="icon">✨</span>
+    <span>IA</span>
+  </a>
+  <a href="javascript:void(0)" class="nav-item" (click)="toggleCart()">
+    <span class="icon">🛒</span>
+    <span>Carrito</span>
+  </a>
+  <a routerLink="/login" class="nav-item">
+    <span class="icon">👤</span>
+    <span>Staff</span>
+  </a>
+</nav>
+

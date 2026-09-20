@@ -1,0 +1,60 @@
+<div class="dashboard-layout">
+  <!-- Sidebar lateral -->
+  <aside class="sidebar glass-card">
+    <div class="logo-box">
+      <div class="logo-icon small"></div>
+      <h3>UrbanStyle</h3>
+    </div>
+    <nav class="nav-links">
+      <!-- Productos y Categorías: Administrador y Encargado -->
+      <a *ngIf="userRole === 'Administrador' || userRole === 'Encargado'" routerLink="/dashboard/productos" routerLinkActive="active">Productos</a>
+      <a *ngIf="userRole === 'Administrador' || userRole === 'Encargado'" routerLink="/dashboard/categorias" routerLinkActive="active">Categorías</a>
+      <a *ngIf="userRole === 'Administrador' || userRole === 'Encargado'" routerLink="/dashboard/colecciones" routerLinkActive="active">Colecciones</a>
+      
+      <!-- Proveedores: Solo Administrador y Proveedor -->
+      <a *ngIf="userRole === 'Administrador'" routerLink="/dashboard/proveedores" routerLinkActive="active">Proveedores</a>
+      <a *ngIf="userRole === 'Proveedor'" routerLink="/dashboard/mis-productos" routerLinkActive="active">Mis Productos</a>
+      
+      <a *ngIf="userRole === 'Administrador' || userRole === 'Encargado'" routerLink="/dashboard/variantes" routerLinkActive="active">Tallas y Colores</a>
+      <a *ngIf="userRole === 'Administrador' || userRole === 'Encargado' || userRole === 'Proveedor' || userRole === 'Cajero'" routerLink="/dashboard/inventario" routerLinkActive="active">Inventario</a>
+      
+      <!-- Ventas -->
+      <a *ngIf="userRole === 'Administrador' || userRole === 'Encargado' || userRole === 'Cajero'" routerLink="/dashboard/ventas" routerLinkActive="active">POS / Crear Venta</a>
+      <a *ngIf="userRole === 'Administrador' || userRole === 'Encargado'" routerLink="/dashboard/reservas" routerLinkActive="active">Gestión Reservas</a>
+      <a *ngIf="userRole === 'Administrador' || userRole === 'Encargado'" routerLink="/dashboard/historial-ventas" routerLinkActive="active">Historial Ventas</a>
+      <a *ngIf="userRole === 'Administrador'" routerLink="/dashboard/reportes" routerLinkActive="active">Reportes y Estadísticas</a>
+      
+      <a *ngIf="userRole === 'Administrador'" routerLink="/dashboard/sucursales" routerLinkActive="active">Sucursales</a>
+      <a *ngIf="userRole === 'Administrador'" routerLink="/dashboard/usuarios" routerLinkActive="active">Usuarios</a>
+      
+      <!-- Nuevos Módulos -->
+      <a *ngIf="userRole === 'Administrador'" routerLink="/dashboard/devoluciones" routerLinkActive="active">Devoluciones</a>
+      
+      <!-- Delivery / Repartidor -->
+      <a *ngIf="userRole === 'Administrador' || userRole === 'Repartidor'" routerLink="/dashboard/delivery" routerLinkActive="active">Recojos / Delivery</a>
+      
+      <!-- Cliente -->
+      <a *ngIf="userRole === 'Cliente'" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" style="background-color: var(--primary); color: white; margin-bottom: 10px; border-radius: 6px; text-align: center;">Ir a la Tienda Virtual</a>
+      <a *ngIf="userRole === 'Cliente'" routerLink="/dashboard/perfil" routerLinkActive="active">Mi Perfil</a>
+    </nav>
+    <div class="logout">
+      <button class="btn-secondary" (click)="logout()">Cerrar Sesión</button>
+    </div>
+  </aside>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <header class="topbar">
+      <h2>Panel de Control</h2>
+      <a routerLink="/dashboard/perfil" class="user-profile" style="text-decoration: none; color: inherit; cursor: pointer;">
+        <span>{{ userRole }}</span>
+        <div class="avatar"></div>
+      </a>
+    </header>
+
+    <div class="content-area glass-card">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>
+

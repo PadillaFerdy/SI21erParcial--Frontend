@@ -1,0 +1,93 @@
+<div class="header-actions">
+  <div>
+    <h3>Gestión de Devoluciones</h3>
+    <p class="subtitle">Administra las devoluciones y asigna recogos.</p>
+  </div>
+  <button class="btn-primary" style="width: auto;" (click)="showModal = true">+ Solicitar Devolución</button>
+</div>
+
+<div class="table-container" *ngIf="!isLoading">
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>ID Venta</th>
+        <th>Tipo</th>
+        <th>Motivo</th>
+        <th>Estado</th>
+        <th>Asignar Delivery</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let dev of devoluciones">
+        <td>#{{ dev.id }}</td>
+        <td class="font-bold">#{{ dev.venta_id }}</td>
+        <td><span class="badge" style="background-color: #f1f5f9; color: var(--text-main);">{{ dev.tipo_solicitud || 'Devolución' }}</span></td>
+        <td>{{ dev.motivo }}</td>
+        <td>
+          <span class="badge" [ngClass]="{'badge-active': dev.estado === 'Completada', 'badge-inactive': dev.estado === 'Pendiente' || dev.estado === 'En Proceso'}">
+            {{ dev.estado }}
+          </span>
+        </td>
+        <td>
+          <div *ngIf="dev.requiere_delivery === 1">
+            <select class="input-field" (change)="asignarRepartidor(dev.id, $event)" *ngIf="dev.estado === 'Pendiente'" style="padding: 6px; width: auto;">
+              <option value="">Asignar Repartidor...</option>
+              <option *ngFor="let r of repartidores" [value]="r.id">{{ r.nombre_completo }}</option>
+            </select>
+            <span *ngIf="dev.estado !== 'Pendiente'" style="color: var(--text-muted); font-size: 0.9rem;">Ya asignado</span>
+          </div>
+          <div *ngIf="dev.requiere_delivery === 0">
+            <span style="color: var(--text-muted); font-size: 0.9rem;">Cliente en tienda</span>
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="devoluciones.length === 0">
+        <td colspan="5" class="empty-state">No hay devoluciones registradas</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="modal-overlay" *ngIf="showModal" (click)="showModal = false">
+  <div class="modal-content glass-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Solicitar Nueva Devolución</h3>
+      <button class="btn-close" (click)="showModal = false">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="input-group">
+        <label>Seleccionar Venta</label>
+        <select class="input-field" [(ngModel)]="nuevaDev.venta_id">
+          <option value="">Seleccione una venta...</option>
+          <option *ngFor="let v of ventas" [value]="v.id">Venta #{{ v.id }} - Total: Bs. {{ v.total }}</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Tipo de Solicitud</label>
+        <select class="input-field" [(ngModel)]="nuevaDev.tipo_solicitud">
+          <option value="Devolución">Reembolso / Devolución</option>
+          <option value="Cambio">Cambio de Talla / Color</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label>Método de Entrega</label>
+        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; margin-top: 5px;">
+          <input type="checkbox" [(ngModel)]="nuevaDev.requiere_delivery">
+          Solicitar recojo y envío por Delivery (Costo Extra)
+        </label>
+      </div>
+
+      <div class="input-group">
+        <label>Detalle o Motivo</label>
+        <textarea class="input-field" rows="3" [(ngModel)]="nuevaDev.motivo" placeholder="Ej: Cambio de talla M a talla L"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="showModal = false">Cancelar</button>
+      <button class="btn-primary" style="width: auto;" (click)="crearDevolucion()">Guardar Devolución</button>
+    </div>
+  </div>
+</div>
+

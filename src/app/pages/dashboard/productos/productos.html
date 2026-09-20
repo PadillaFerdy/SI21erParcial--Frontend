@@ -1,0 +1,119 @@
+<div class="header-actions">
+  <div>
+    <h3>Gestión de Productos</h3>
+    <p class="subtitle">Administra tu catálogo principal de prendas.</p>
+  </div>
+  <button class="btn-primary" (click)="openModal()">+ Nuevo Producto</button>
+</div>
+
+<div class="table-container">
+  <div *ngIf="isLoading" class="loading-state">Cargando...</div>
+  
+  <table *ngIf="!isLoading">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Producto</th>
+        <th>Categoría</th>
+        <th>Precio</th>
+        <th>Modelo 3D (AR)</th>
+        <th width="120">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of productos">
+        <td>#{{ p.id }}</td>
+        <td class="font-bold">{{ p.nombre }}</td>
+        <td><span class="badge badge-categoria">{{ getCategoriaNombre(p.categoria_id) }}</span></td>
+        <td class="font-bold text-orange">Bs. {{ p.precio }}</td>
+        <td>
+          <span *ngIf="p.modelo_3d_url" class="badge badge-ar">AR Activo</span>
+          <span *ngIf="!p.modelo_3d_url" class="badge badge-inactive">No tiene</span>
+        </td>
+        <td class="action-buttons">
+          <button class="btn-edit" (click)="editProducto(p)">Editar</button>
+          <button class="btn-delete" (click)="deleteProducto(p.id)">Eliminar</button>
+        </td>
+      </tr>
+      <tr *ngIf="productos.length === 0">
+        <td colspan="6" class="empty-state">No hay productos registrados en el catálogo.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal para Nuevo Producto -->
+<div class="modal-overlay" *ngIf="showModal">
+  <div class="modal-content glass-card">
+    <div class="modal-header">
+      <h3>{{ editingId ? 'Editar Producto' : 'Crear Producto' }}</h3>
+      <button class="btn-close" (click)="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      
+      <div class="grid-2-col" style="display: flex; gap: 16px; margin-bottom: 16px;">
+        <div class="input-group" style="flex: 1; margin: 0;">
+          <label>Categoría</label>
+          <select class="input-field" [(ngModel)]="nuevoProducto.categoria_id">
+            <option [ngValue]="null" disabled selected>Categoría...</option>
+            <option *ngFor="let cat of categorias" [ngValue]="cat.id">{{ cat.nombre }}</option>
+          </select>
+        </div>
+        <div class="input-group" style="flex: 1; margin: 0;">
+          <label>Proveedor</label>
+          <select class="input-field" [(ngModel)]="nuevoProducto.proveedor_id">
+            <option [ngValue]="null">Sin Proveedor</option>
+            <option *ngFor="let prov of proveedores" [ngValue]="prov.id">{{ prov.nombre }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Colección</label>
+        <select class="input-field" [(ngModel)]="nuevoProducto.coleccion_id">
+          <option [ngValue]="null">Sin Colección</option>
+          <option *ngFor="let col of colecciones" [ngValue]="col.id">{{ col.nombre }}</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label>Nombre del Producto</label>
+        <input type="text" class="input-field" placeholder="Ej. Chaqueta de Cuero" [(ngModel)]="nuevoProducto.nombre">
+      </div>
+      
+      <div class="input-group">
+        <label>Descripción</label>
+        <textarea class="input-field" rows="2" placeholder="Detalles de la prenda..." [(ngModel)]="nuevoProducto.descripcion"></textarea>
+      </div>
+      
+      <div class="input-group">
+        <label>Precio (Bs.)</label>
+        <input type="number" class="input-field" placeholder="0.00" [(ngModel)]="nuevoProducto.precio" min="0">
+      </div>
+      
+      <div class="input-group" style="margin-top: 10px;">
+        <label style="color: var(--primary);">Archivos del Producto</label>
+        
+        <div style="margin-top: 10px;">
+          <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Subir Foto (2D)</label>
+          <input type="file" accept="image/*" class="input-field" (change)="onFileSelected($event, 'imagen')">
+          <small *ngIf="nuevoProducto.imagen_url" style="display: block; margin-top: 5px;" class="text-muted">Ya tiene una imagen: <a [href]="nuevoProducto.imagen_url" target="_blank">Ver actual</a> | <a href="javascript:void(0)" (click)="removeFile('imagen')" style="color: var(--danger); text-decoration: underline;">Eliminar</a></small>
+        </div>
+
+        <div style="margin-top: 15px;">
+          <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Subir Modelo (3D .glb / .gltf)</label>
+          <input type="file" accept=".glb,.gltf" class="input-field" (change)="onFileSelected($event, 'modelo')">
+          <small *ngIf="nuevoProducto.modelo_3d_url" style="display: block; margin-top: 5px;" class="text-muted">Ya tiene un modelo 3D: <a [href]="nuevoProducto.modelo_3d_url" target="_blank">Ver actual</a> | <a href="javascript:void(0)" (click)="removeFile('modelo')" style="color: var(--danger); text-decoration: underline;">Eliminar</a></small>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-secondary" (click)="closeModal()">Cancelar</button>
+      <button type="submit" class="btn-primary" (click)="guardarProducto()" [disabled]="isSaving || isUploading">
+        {{ isUploading ? 'Subiendo archivos...' : (isSaving ? 'Guardando...' : 'Guardar') }}
+      </button>
+    </div>
+  </div>
+</div>
+
