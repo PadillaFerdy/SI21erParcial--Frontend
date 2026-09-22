@@ -37,7 +37,7 @@ export class VestidorVirtual implements OnInit {
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.http.get<any[]>('http://34.230.18.9/api/v1/catalogo/productos').subscribe(data => {
+    this.http.get<any[]>('http://localhost:8000/api/v1/catalogo/productos').subscribe(data => {
       this.productos = data;
       this.cdr.detectChanges();
     });
@@ -82,7 +82,7 @@ export class VestidorVirtual implements OnInit {
     try {
       const rawUrl = this.getImagenUrl(this.productoSeleccionado.imagen_url);
       
-      const proxyResponse = await this.http.get<any>(`http://34.230.18.9/api/v1/archivos/proxy-imagen?url=${encodeURIComponent(rawUrl)}`).toPromise();
+      const proxyResponse = await this.http.get<any>(`http://localhost:8000/api/v1/archivos/proxy-imagen?url=${encodeURIComponent(rawUrl)}`).toPromise();
       const base64Image = proxyResponse.base64;
       
       this.processedClothingUrl = await this.removeBackground(base64Image);
@@ -212,10 +212,10 @@ export class VestidorVirtual implements OnInit {
   getImagenUrl(url: string | null): string {
     if (!url) return '';
     if (url.startsWith('http://192.168.')) {
-      return url.replace(/http:\/\/192\.168\.\d+\.\d+:\d+\//, 'http://34.230.18.9/');
+      return url.replace(/http:\/\/192\.168\.\d+\.\d+:\d+\//, 'http://localhost:8000/');
     }
     if (!url.startsWith('http')) {
-      return 'http://34.230.18.9/' + url;
+      return 'http://localhost:8000/' + url;
     }
     return url;
   }

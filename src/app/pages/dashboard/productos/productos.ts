@@ -79,7 +79,7 @@ export class Productos implements OnInit {
   }
 
   loadProveedores() {
-    this.http.get<any[]>('http://34.230.18.9/api/v1/catalogo/proveedores').subscribe(data => {
+    this.http.get<any[]>('http://localhost:8000/api/v1/catalogo/proveedores').subscribe(data => {
       this.proveedores = data;
       this.cdr.detectChanges();
     });
@@ -161,7 +161,7 @@ export class Productos implements OnInit {
     const formData = new FormData();
     formData.append('file', file);
     return new Promise((resolve, reject) => {
-      this.http.post<any>('http://34.230.18.9/api/v1/archivos/upload', formData).subscribe({
+      this.http.post<any>('http://localhost:8000/api/v1/archivos/upload', formData).subscribe({
         next: (res) => resolve(res.url),
         error: (err) => reject(err)
       });

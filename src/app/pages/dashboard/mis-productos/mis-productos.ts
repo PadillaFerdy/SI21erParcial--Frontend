@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-const API_URL = 'http://34.230.18.9/api/v1';
+const API_URL = 'http://localhost:8000/api/v1';
 
 @Component({
   selector: 'app-mis-productos',

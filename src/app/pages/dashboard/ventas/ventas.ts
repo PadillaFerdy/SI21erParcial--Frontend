@@ -69,11 +69,11 @@ export class Ventas implements OnInit {
   loadData() {
     // Cargar catálogos básicos
     forkJoin({
-      productos: this.http.get<any[]>('http://34.230.18.9/api/v1/catalogo/productos'),
-      tallas: this.http.get<any[]>('http://34.230.18.9/api/v1/catalogo/tallas'),
-      colores: this.http.get<any[]>('http://34.230.18.9/api/v1/catalogo/colores'),
-      sucursales: this.http.get<any[]>('http://34.230.18.9/api/v1/sucursales/sucursales'),
-      inventarios: this.http.get<any[]>('http://34.230.18.9/api/v1/sucursales/inventarios')
+      productos: this.http.get<any[]>('http://localhost:8000/api/v1/catalogo/productos'),
+      tallas: this.http.get<any[]>('http://localhost:8000/api/v1/catalogo/tallas'),
+      colores: this.http.get<any[]>('http://localhost:8000/api/v1/catalogo/colores'),
+      sucursales: this.http.get<any[]>('http://localhost:8000/api/v1/sucursales/sucursales'),
+      inventarios: this.http.get<any[]>('http://localhost:8000/api/v1/sucursales/inventarios')
     }).subscribe({
       next: (res: any) => {
       this.productos = res.productos;
@@ -186,7 +186,7 @@ export class Ventas implements OnInit {
     
     // Iniciar simulación real de QR:
     const payload = { amount: this.getTotal() };
-    this.http.post<any>('http://34.230.18.9/api/v1/ventas/generar-qr', payload).subscribe({
+    this.http.post<any>('http://localhost:8000/api/v1/ventas/generar-qr', payload).subscribe({
       next: (res) => {
         this.qrUrl = res.qr_url;
         this.qrTxId = res.tx_id;
@@ -211,7 +211,7 @@ export class Ventas implements OnInit {
   checkQRPaymentStatus() {
     if (!this.qrTxId) return;
     
-    this.http.get<any>(`http://34.230.18.9/api/v1/ventas/estado-pago-qr/${this.qrTxId}`).subscribe({
+    this.http.get<any>(`http://localhost:8000/api/v1/ventas/estado-pago-qr/${this.qrTxId}`).subscribe({
       next: (res) => {
         if (res.status === 'COMPLETED') {
           // El banco confirmó el pago! Detener polling y mostrar animación de éxito.
@@ -240,7 +240,7 @@ export class Ventas implements OnInit {
     if (!this.qrTxId) return;
     this.isVerifying = true;
     this.cdr.detectChanges();
-    this.http.post<any>(`http://34.230.18.9/api/v1/ventas/simular-pago-cliente/${this.qrTxId}`, {}).subscribe();
+    this.http.post<any>(`http://localhost:8000/api/v1/ventas/simular-pago-cliente/${this.qrTxId}`, {}).subscribe();
     // Esto hará que el próximo 'tick' del polling devuelva COMPLETED
   }
 
@@ -264,7 +264,7 @@ export class Ventas implements OnInit {
     
     const payload = { amount: this.getTotal(), currency: 'bob' };
     
-    this.http.post<any>('http://34.230.18.9/api/v1/ventas/create-payment-intent', payload).subscribe({
+    this.http.post<any>('http://localhost:8000/api/v1/ventas/create-payment-intent', payload).subscribe({
       next: (res) => {
         // Obtenemos el client_secret de la simulación
         const txId = res.client_secret;

@@ -4,6 +4,7 @@
     <div class="logo-box">
       <div class="logo-icon small"></div>
       <h3>UrbanStyle</h3>
+      <span>Ops</span>
     </div>
     <nav class="nav-links">
       <!-- Productos y Categorías: Administrador y Encargado -->
@@ -34,7 +35,7 @@
       <a *ngIf="userRole === 'Administrador' || userRole === 'Repartidor'" routerLink="/dashboard/delivery" routerLinkActive="active">Recojos / Delivery</a>
       
       <!-- Cliente -->
-      <a *ngIf="userRole === 'Cliente'" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" style="background-color: var(--primary); color: white; margin-bottom: 10px; border-radius: 6px; text-align: center;">Ir a la Tienda Virtual</a>
+      <a *ngIf="userRole === 'Cliente'" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="store-link">Ir a la Tienda Virtual</a>
       <a *ngIf="userRole === 'Cliente'" routerLink="/dashboard/perfil" routerLinkActive="active">Mi Perfil</a>
     </nav>
     <div class="logout">
@@ -48,7 +49,7 @@
       <h2>Panel de Control</h2>
       <a routerLink="/dashboard/perfil" class="user-profile" style="text-decoration: none; color: inherit; cursor: pointer;">
         <span>{{ userRole }}</span>
-        <div class="avatar"></div>
+        <div class="avatar">{{ userRole ? userRole.charAt(0) : 'U' }}</div>
       </a>
     </header>
 

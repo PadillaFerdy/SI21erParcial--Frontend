@@ -11,13 +11,14 @@ h3 { color: var(--text-main); font-size: 1.5rem; }
 .btn-primary { width: auto; padding: 10px 20px; }
 
 .table-container {
-  background: white; border: var(--card-border);
-  border-radius: 8px; overflow: hidden;
+  background: var(--paper); border: var(--card-border);
+  border-radius: 18px; overflow: hidden;
+  box-shadow: 0 12px 32px rgba(31, 38, 40, 0.08);
 }
 
 table { width: 100%; border-collapse: collapse; }
-th, td { padding: 16px; text-align: left; border-bottom: 1px solid #e2e8f0; }
-th { background-color: #f8fafc; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; }
+th, td { padding: 16px; text-align: left; border-bottom: 1px solid rgba(31, 38, 40, 0.1); }
+th { background-color: #ebe2cf; color: var(--text-muted); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; }
 td { color: var(--text-main); font-size: 0.95rem; vertical-align: middle; }
 
 .font-bold { font-weight: 600; }
@@ -62,7 +63,7 @@ td { color: var(--text-main); font-size: 0.95rem; vertical-align: middle; }
 }
 
 .modal-content {
-  width: 100%; max-width: 520px; background: white; padding: 24px;
+  width: 100%; max-width: 520px; background: var(--paper); padding: 24px;
 }
 
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }

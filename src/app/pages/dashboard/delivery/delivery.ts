@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Auth } from '../../../services/auth';
 
-const API_URL = 'http://34.230.18.9/api/v1';
+const API_URL = 'http://localhost:8000/api/v1';
 
 @Component({
   selector: 'app-delivery',

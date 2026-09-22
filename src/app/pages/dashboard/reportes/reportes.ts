@@ -23,7 +23,7 @@ export class Reportes implements OnInit {
   cargarReporte() {
     this.isLoading = true;
     this.cdr.detectChanges();
-    this.http.get<any>('http://34.230.18.9/api/v1/ventas/reportes').subscribe({
+    this.http.get<any>('http://localhost:8000/api/v1/ventas/reportes').subscribe({
       next: (data) => {
         this.reporte = data;
         this.isLoading = false;

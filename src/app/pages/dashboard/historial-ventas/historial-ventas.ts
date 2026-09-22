@@ -36,8 +36,8 @@ export class HistorialVentas implements OnInit {
     this.catalogoService.getProductos().subscribe(res => { this.productos = res; this.checkLoading(); });
     this.catalogoService.getTallas().subscribe(res => { this.tallas = res; this.checkLoading(); });
     this.catalogoService.getColores().subscribe(res => { this.colores = res; this.checkLoading(); });
-    this.http.get<any[]>('http://34.230.18.9/api/v1/sucursales/sucursales').subscribe(res => { this.sucursales = res; this.checkLoading(); });
-    this.http.get<any[]>('http://34.230.18.9/api/v1/seguridad/usuarios').subscribe(res => { this.usuarios = res; this.checkLoading(); });
+    this.http.get<any[]>('http://localhost:8000/api/v1/sucursales/sucursales').subscribe(res => { this.sucursales = res; this.checkLoading(); });
+    this.http.get<any[]>('http://localhost:8000/api/v1/seguridad/usuarios').subscribe(res => { this.usuarios = res; this.checkLoading(); });
     this.ventasService.getVentas().subscribe(res => { this.ventas = res; this.checkLoading(); });
   }
 

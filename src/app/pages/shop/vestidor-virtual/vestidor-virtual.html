@@ -1,17 +1,18 @@
 <div class="vestidor-container">
   <div class="header-section text-center">
-    <h1 class="ai-title">Vestidor Virtual con Inteligencia Artificial</h1>
-    <p class="text-muted">Sube una foto de cuerpo completo y nuestra IA adaptará la prenda a tu medida.</p>
+    <h1 class="ai-title">Vestidor virtual para probar antes de reservar</h1>
+    <p class="text-muted">Sube una foto de cuerpo completo, elige una prenda y ajusta el resultado sobre tu silueta.</p>
   </div>
 
   <div class="vestidor-grid">
     <!-- Paso 1: Subir Foto -->
     <div class="step-card glass-card">
-      <h3>Paso 1: Tu Foto</h3>
+      <h3>Tu foto</h3>
       
       <div class="upload-area" *ngIf="!userPhotoUrl">
         <label for="photo-upload" class="upload-label">
-          <span>Sube una foto tuya</span>
+          <strong>Subir foto</strong>
+          <span>Imagen frontal, cuerpo completo y buena luz.</span>
         </label>
         <input type="file" id="photo-upload" accept="image/*" (change)="onPhotoSelected($event)" hidden>
       </div>
@@ -25,7 +26,7 @@
 
     <!-- Paso 2: Elegir Prenda -->
     <div class="step-card glass-card">
-      <h3>Paso 2: La Prenda</h3>
+      <h3>La prenda</h3>
       
       <select class="input-field" [(ngModel)]="productoSeleccionado" (change)="showResult = false">
         <option [ngValue]="null" disabled selected>Selecciona del catálogo...</option>
@@ -44,13 +45,13 @@
 
   <div class="action-section text-center">
     <button class="btn-primary huge-btn ai-btn" (click)="probarPrenda()" [disabled]="isProcessing || !userPhotoUrl || !productoSeleccionado">
-      {{ isProcessing ? aiStatusMessage : 'Generar Prueba con IA' }}
+      {{ isProcessing ? aiStatusMessage : 'Generar prueba virtual' }}
     </button>
   </div>
 
   <!-- Zona de Resultados (Estudio Interactivo) -->
   <div class="result-section glass-card text-center" *ngIf="showResult">
-    <h3>Estudio de Ajuste de IA</h3>
+    <h3>Estudio de ajuste</h3>
     <p class="text-muted">Arrastra la prenda sobre ti y utiliza los controles para que coincida perfectamente con tu silueta.</p>
     
     <div class="ai-mock-container interactive-container" 

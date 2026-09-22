@@ -32,7 +32,7 @@ export class Shop implements OnInit {
   }
 
   ngOnInit() {
-    this.http.get<any[]>('http://34.230.18.9/api/v1/sucursales/sucursales').subscribe(res => {
+    this.http.get<any[]>('http://localhost:8000/api/v1/sucursales/sucursales').subscribe(res => {
       this.sucursales = res;
     });
   }
@@ -99,7 +99,7 @@ export class Shop implements OnInit {
           }))
         };
 
-        this.http.post('http://34.230.18.9/api/v1/reservas/', payload).subscribe({
+        this.http.post('http://localhost:8000/api/v1/reservas/', payload).subscribe({
           next: () => {
             this.finalizarProceso("¡Reserva completada con éxito! Te esperamos en caja para realizar el pago.");
           },
@@ -127,7 +127,7 @@ export class Shop implements OnInit {
           }))
         };
 
-        this.http.post('http://34.230.18.9/api/v1/ventas/', payload).subscribe({
+        this.http.post('http://localhost:8000/api/v1/ventas/', payload).subscribe({
           next: () => {
             if (this.tipoEntrega === 'Delivery') {
               this.finalizarProceso("¡Pago exitoso! Tu pedido está en camino.");
