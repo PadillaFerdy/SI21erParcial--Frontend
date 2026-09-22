@@ -1,15 +1,43 @@
 <section class="hero-section">
   <div class="hero-content">
     <p class="hero-kicker">Boutique digital con prueba virtual</p>
-    <h1>Prendas listas para verse, probarse y reservarse.</h1>
-    <p>Explora el catálogo, revisa piezas en 3D y arma tu pedido sin perder el tacto de una tienda de moda.</p>
-    <button class="btn-primary" (click)="scrollToCatalog()">Ver catálogo</button>
+    <h1>Moda que puedes probar antes de reservar.</h1>
+    <p>Explora prendas reales, revisa modelos 3D y separa tu look en sucursal o delivery sin perder el ritmo de una tienda física.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" (click)="scrollToCatalog()">Ver prendas disponibles</button>
+      <a routerLink="/vestidor-virtual" class="hero-link">Abrir vestidor AR</a>
+    </div>
+    <div class="hero-metrics" aria-label="Ventajas de compra">
+      <span><strong>3D</strong> vista de prenda</span>
+      <span><strong>24h</strong> reserva activa</span>
+      <span><strong>Bs</strong> pago flexible</span>
+    </div>
   </div>
   <div class="hero-ticket" aria-hidden="true">
-    <span>Nueva temporada</span>
+    <span>Ficha de ajuste</span>
     <strong>AR fitting</strong>
+    <div class="ticket-lines">
+      <i></i>
+      <i></i>
+      <i></i>
+    </div>
     <small>UrbanStyle AR</small>
   </div>
+</section>
+
+<section class="service-strip" aria-label="Cómo comprar">
+  <article>
+    <span>Explora</span>
+    <p>Catálogo ordenado por prendas, colección y disponibilidad de modelo 3D.</p>
+  </article>
+  <article>
+    <span>Prueba</span>
+    <p>Usa el vestidor virtual para ajustar escala y rotación sobre tu foto.</p>
+  </article>
+  <article>
+    <span>Reserva</span>
+    <p>Elige sucursal, delivery, QR, tarjeta o pago en caja según tu compra.</p>
+  </article>
 </section>
 
 <section class="catalog-section" id="catalog">
@@ -21,7 +49,7 @@
   <div *ngIf="isLoading" class="loading-state">Cargando productos...</div>
 
   <div class="product-grid" *ngIf="!isLoading">
-    <div class="product-card glass-card" *ngFor="let producto of productos; let i = index">
+    <div class="product-card glass-card" [class.featured-card]="i === 0" *ngFor="let producto of productos; let i = index">
       
         <div class="product-visual">
           <ng-container *ngIf="producto.modelo_3d_url; else elseImage">
@@ -32,14 +60,14 @@
             camera-controls 
             ar
             shadow-intensity="1"
-            style="width: 100%; height: 250px; background-color: transparent; border-radius: 16px;">
+            class="product-model">
           </model-viewer>
         </ng-container>
         
         <ng-template #elseImage>
           <ng-container *ngIf="producto.imagen_url; else elseEmpty">
             <div class="image-container">
-              <img [src]="producto.imagen_url" [alt]="producto.nombre" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+              <img [src]="producto.imagen_url" [alt]="producto.nombre" class="product-image">
             </div>
           </ng-container>
         </ng-template>
@@ -54,7 +82,10 @@
         <div class="product-info">
           <div class="brand">{{ producto.categoria?.nombre || 'Categoría' }}</div>
           <h3 class="product-title">{{ producto.nombre }}</h3>
-          <p class="product-price">Bs. {{ producto.precio }}</p>
+          <div class="product-meta">
+            <p class="product-price">Bs. {{ producto.precio }}</p>
+            <span *ngIf="producto.modelo_3d_url">3D</span>
+          </div>
           <button class="btn-primary outline full-width" (click)="addToCart(producto)">Añadir al carrito</button>
         </div>
     </div>

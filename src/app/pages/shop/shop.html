@@ -13,8 +13,9 @@
   </div>
 
   <div class="nav-actions">
-    <button class="cart-btn" (click)="toggleCart()">
-      🛒 <span class="cart-badge">{{ cartItems.length }}</span>
+    <button class="cart-btn" type="button" (click)="toggleCart()" aria-label="Abrir carrito">
+      <span class="cart-label">Bolsa</span>
+      <span class="cart-badge">{{ cartItems.length }}</span>
     </button>
   </div>
 </nav>
@@ -66,7 +67,7 @@
       <span>Total:</span>
       <span class="font-bold text-primary">Bs. {{ cartService.getTotal() }}</span>
     </div>
-    <button class="btn-primary full-width" (click)="openCheckout()">Proceder al Pago / Reserva</button>
+      <button class="btn-primary full-width" (click)="openCheckout()">Confirmar compra o reserva</button>
   </div>
 </div>
 
@@ -115,37 +116,37 @@
         </select>
       </div>
 
-      <div class="form-group" *ngIf="metodoPagoGlobal === 'Tarjeta'" style="background: rgba(0,0,0,0.02); padding: 20px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <label style="font-size: 0.85rem; margin: 0;">Número de Tarjeta</label>
-          <div style="display: flex; gap: 4px;">
-            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" style="color: #6366f1;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+      <div class="form-group payment-panel" *ngIf="metodoPagoGlobal === 'Tarjeta'">
+        <div class="payment-heading">
+          <label>Número de Tarjeta</label>
+          <div class="card-mark">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
           </div>
         </div>
-        <input type="text" class="input-field" placeholder="0000 0000 0000 0000" style="margin-bottom: 12px; letter-spacing: 2px; font-family: monospace; font-size: 1.1rem;"
+        <input type="text" class="input-field card-number" placeholder="0000 0000 0000 0000"
                autocomplete="off" maxlength="19" [value]="numeroTarjeta" (input)="onTarjetaNativeInput($event)">
-        <div style="display: flex; gap: 12px;">
-          <input type="text" class="input-field" placeholder="MM/AA" style="flex: 1;" autocomplete="off" maxlength="5" [value]="fechaExpiracion" (input)="onFechaNativeInput($event)">
-          <input type="text" class="input-field" placeholder="CVC" style="flex: 1;" autocomplete="off" maxlength="4">
+        <div class="card-row">
+          <input type="text" class="input-field" placeholder="MM/AA" autocomplete="off" maxlength="5" [value]="fechaExpiracion" (input)="onFechaNativeInput($event)">
+          <input type="text" class="input-field" placeholder="CVC" autocomplete="off" maxlength="4">
         </div>
         
         <!-- Badge de Stripe -->
-        <div style="display: flex; flex-direction: column; align-items: center; margin-top: 15px;">
-          <div class="secure-badge" style="margin-top: 0; margin-bottom: 5px;">
+        <div class="secure-stack">
+          <div class="secure-badge">
             <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
             Procesado de forma segura
           </div>
-          <div style="font-size: 0.7rem; color: #64748b; font-weight: 600; display: flex; align-items: center; gap: 4px;">
-            POWERED BY <strong style="color: #6366f1; font-size: 0.9rem; letter-spacing: 1px;">stripe</strong>
+          <div class="stripe-line">
+            Powered by <strong>stripe</strong>
           </div>
         </div>
       </div>
       
-      <div class="form-group text-center" *ngIf="metodoPagoGlobal === 'QR'" style="background: rgba(0,0,0,0.02); padding: 20px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center;">
-        <p class="text-muted" style="margin-bottom: 15px; font-size: 0.95rem;">Escanea el código con tu App Bancaria para pagar <strong class="text-primary">Bs. {{ cartService.getTotal() }}</strong></p>
-        <div class="qr-container qr-pulse" style="position: relative; width: 180px; height: 180px; background: white; border: 2px solid #e2e8f0; border-radius: 12px; padding: 15px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
+      <div class="form-group text-center qr-panel" *ngIf="metodoPagoGlobal === 'QR'">
+        <p class="text-muted">Escanea el código con tu app bancaria para pagar <strong class="text-primary">Bs. {{ cartService.getTotal() }}</strong></p>
+        <div class="qr-container qr-pulse">
           <!-- Scanner Line -->
-          <div class="qr-scanner" style="position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: #f97316; box-shadow: 0 0 15px 3px #f97316; animation: scan 2s ease-in-out infinite; z-index: 10;"></div>
+          <div class="qr-scanner"></div>
           
           <!-- Mock QR Code SVG -->
           <svg viewBox="0 0 100 100" width="100%" height="100%">
@@ -172,7 +173,7 @@
             <rect x="65" y="80" width="10" height="10" fill="#1e293b"/>
           </svg>
         </div>
-        <div class="secure-badge" style="margin-top: 15px;">
+        <div class="secure-badge qr-secure">
           <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
           Aprobación automática instantánea
         </div>
@@ -193,13 +194,13 @@
     </div>
 
     <!-- PANTALLA DE ÉXITO -->
-    <div class="modal-body success-state" *ngIf="isSuccess" style="text-align: center; padding: 40px 20px;">
+    <div class="modal-body success-state" *ngIf="isSuccess">
       <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
         <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
         <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
       </svg>
-      <h3 style="color: #10b981; margin-top: 20px; font-size: 1.8rem;">¡Pago Exitoso!</h3>
-      <p class="text-muted" style="margin-top: 10px; font-size: 1.1rem;">{{ successMessage }}</p>
+      <h3>Pago exitoso</h3>
+      <p class="text-muted">{{ successMessage }}</p>
     </div>
     
     <div class="modal-footer">
@@ -207,7 +208,7 @@
       <button class="btn-primary" *ngIf="!isSuccess" (click)="confirmarPedido()" [disabled]="isProcessing || !correoCliente || (tipoEntrega === 'Recojo en Tienda' && !sucursalSeleccionada) || (tipoEntrega === 'Delivery' && !direccionEnvio)">
         {{ isProcessing ? 'Procesando...' : 'Confirmar Pedido' }}
       </button>
-      <button class="btn-primary" *ngIf="isSuccess" (click)="closeCheckout()" style="width: 100%;">Entendido</button>
+      <button class="btn-primary full-width" *ngIf="isSuccess" (click)="closeCheckout()">Entendido</button>
     </div>
   </div>
 </div>

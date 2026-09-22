@@ -123,6 +123,10 @@
   font-weight: 800;
 }
 
+.cart-label {
+  letter-spacing: -0.02em;
+}
+
 .cart-btn:hover {
   background: var(--lime);
   box-shadow: 4px 4px 0 rgba(31, 38, 40, 0.14);
@@ -316,6 +320,68 @@
   margin-bottom: 18px;
 }
 
+.payment-panel,
+.qr-panel {
+  padding: 20px;
+  background: #f3ead9;
+  border: 1px solid rgba(31, 38, 40, 0.1);
+  border-radius: 18px;
+}
+
+.payment-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.payment-heading label {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.card-mark {
+  display: inline-flex;
+  color: var(--blue);
+}
+
+.card-number {
+  margin-bottom: 12px;
+  font-family: var(--font-ui);
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
+}
+
+.card-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.secure-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  margin-top: 15px;
+}
+
+.stripe-line {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.stripe-line strong {
+  color: #635bff;
+  font-size: 0.92rem;
+  letter-spacing: 0.08em;
+}
+
 .order-summary {
   margin-top: 24px;
   padding: 18px;
@@ -365,11 +431,42 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 180px;
+  height: 180px;
+  padding: 15px;
   overflow: hidden;
+  margin: 15px auto 0;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(31, 38, 40, 0.08);
 }
 
 .qr-scanner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 100%;
+  height: 3px;
+  background: var(--lime);
+  box-shadow: 0 0 15px 3px rgba(182, 255, 59, 0.9);
   animation: scan 2s ease-in-out infinite;
+}
+
+.qr-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.qr-panel p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.qr-secure {
+  margin-top: 15px;
 }
 
 @keyframes scan {
@@ -407,6 +504,22 @@
   stroke-miterlimit: 10;
   box-shadow: inset 0 0 0 #16a15f;
   animation: fill 0.35s ease-in-out 0.35s forwards, scale 0.25s ease-in-out 0.8s both;
+}
+
+.success-state {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.success-state h3 {
+  margin: 20px 0 0;
+  color: #10b981;
+  font-size: 1.8rem;
+}
+
+.success-state p {
+  margin: 10px 0 0;
+  font-size: 1.1rem;
 }
 
 .checkmark__circle {
@@ -540,5 +653,9 @@
     height: 100vh;
     max-height: 100vh;
     border-radius: 0;
+  }
+
+  .card-row {
+    grid-template-columns: 1fr;
   }
 }
